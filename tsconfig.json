@@ -1,0 +1,11 @@
+{
+	"compilerOptions": {
+		"target": "es2023",
+		"module": "none",
+		"outFile": "./asslider.js",
+		"strict": true,
+		"removeComments": true,
+		"sourceMap": false
+	},
+	"include": ["./src/main.ts"]
+}
