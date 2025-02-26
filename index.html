@@ -4,18 +4,28 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Absurdly Simple Slider</title>
-	<link rel="stylesheet" href="asslider.css">
+	<link rel="stylesheet" href="as-slider.css">
+	<style>
+		.as-slider {
+			width: 800px;
+			height: 600px;
+		}
+	</style>
 </head>
 <body>
-	<div class="asslider">
-		<img src="https://picsum.photos/800/600?random=1" alt="">
-		<img src="https://picsum.photos/800/600?random=2" alt="">
-		<img src="https://picsum.photos/800/600?random=3" alt="">
+	<div class="as-slider">
+		<img src="https://picsum.photos/800/600?random=1" alt="Hello!">
+		<img src="https://picsum.photos/800/600?random=2" alt="This is!">
+		<img src="https://picsum.photos/800/600?random=3" alt="A caption!">
 	</div>
 	
-	<script src="asslider.js"></script>
+	<script src="as-slider.js"></script>
 	<script>
-		const slider = new AsSlider(".asslider", {});
+		const slider = new AsSlider(".as-slider", {
+			captions: true,
+			autoplay: true
+		});
+		slider.init();
 	</script>
 </body>
 </html>
