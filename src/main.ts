@@ -2,6 +2,7 @@ interface Options {
 	autoplay: boolean;
 	autoplayDelay: number;
 	stopAtAction: boolean;
+	stoppedByAction: boolean;
 	pauseOnHover: boolean;
 	transition: string;
 	arrowsNav: boolean;
@@ -16,10 +17,11 @@ class AsSlider {
 	currentSlideId: number;
 	sliderWrapper: HTMLElement | null;
 	sliderContainer: HTMLElement;
-	sliderOptions: Options;
 	arrowLeft: HTMLDivElement | HTMLElement;
 	arrowRight: HTMLDivElement | HTMLElement;
 	autoplayInterval: number | undefined;
+	isTouchDevice: boolean;
+	sliderOptions: Options;
 
 	constructor(slider: string, options: Options | undefined) {
 		this.isInited = false;
@@ -29,11 +31,13 @@ class AsSlider {
 		this.arrowLeft = document.createElement('div');
 		this.arrowRight = document.createElement('div');
 		this.autoplayInterval = undefined;
+		this.isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
 		this.sliderOptions = {
 			autoplay: options?.autoplay ?? false,
 			autoplayDelay: options?.autoplayDelay || 5000,
 			stopAtAction: (options?.stopAtAction == true) ? true : false,
-			pauseOnHover: (options?.pauseOnHover == true) ? true : false,
+			stoppedByAction: false,
+			pauseOnHover: (options?.pauseOnHover == false) ? false : true,
 			transition: options?.transition ?? 'fade',
 			arrowsNav: options?.arrowsNav ?? true,
 			bulletsNav: options?.bulletsNav ?? false,
@@ -53,7 +57,7 @@ class AsSlider {
 		}
 	};
 
-	updateHeight() {
+	updateHeight(): void {
 		const currentSlide: Element = this.sliderContainer.children[this.currentSlideId];
 		let newHeight = currentSlide.clientHeight;
 
@@ -71,7 +75,7 @@ class AsSlider {
 		}
 	};
 
-	updateActiveBullet(slideId: number) {
+	updateActiveBullet(slideId: number): void {
 		if (!this.sliderWrapper?.querySelector('.bullet')) return;
 
 		this.sliderWrapper.querySelectorAll('.bullet').forEach(elm=>{
@@ -80,7 +84,7 @@ class AsSlider {
 		this.sliderWrapper.querySelector(`.bullet[data-slide-id="${slideId}"]`)?.classList.add('active');
 	};
 
-	updateCaption() {
+	updateCaption(): void {
 		if (!this.sliderOptions.captions) return;
 
 		const wrapperCaptions = this.sliderWrapper?.querySelector('.wrapper-captions') as HTMLDivElement;
@@ -101,7 +105,7 @@ class AsSlider {
 		}
 	};
 
-	movePrev() {
+	movePrev(): void {
 		if (this.currentSlideId === 0) {
 			this.sliderContainer.children[this.currentSlideId].classList.remove('active');
 			this.sliderContainer.children[this.sliderContainer.children.length - 1].classList.add('active');
@@ -123,7 +127,7 @@ class AsSlider {
 		if (this.sliderOptions.bulletsNav) this.updateActiveBullet(this.currentSlideId);
 	};
 
-	moveNext() {
+	moveNext(): void {
 		if (this.currentSlideId >= this.childrenLength() - 1) {
 			this.sliderContainer.children[this.currentSlideId].classList.remove('active');
 			this.sliderContainer.children[0].classList.add('active');
@@ -144,7 +148,7 @@ class AsSlider {
 		if (this.sliderOptions.bulletsNav) this.updateActiveBullet(this.currentSlideId);
 	};
 
-	startAutoplay(delay: number | undefined = undefined) {
+	startAutoplay(delay: number | undefined = undefined): void {
 		if (this.autoplayInterval) clearInterval(this.autoplayInterval);
 
 		if (delay) {
@@ -159,14 +163,12 @@ class AsSlider {
 		}, delayTime);
 	};
 	
-	stopAutoplay() {
+	stopAutoplay(): void {
 		clearInterval(this.autoplayInterval);
 		this.autoplayInterval = undefined;
 	};
 
-	init() {
-		// console.log(`isInited: ${this.isInited}`);
-
+	init(): void {
 		if (this.isInited) return;
 
 		this.isInited = true;
@@ -199,6 +201,7 @@ class AsSlider {
 		this.sliderContainer.firstElementChild?.classList.add('active');
 
 		this.sliderWrapper.appendChild(this.sliderContainer);
+		
 
 		// append arrows if necesary
 		if (this.sliderOptions.arrowsNav) {
@@ -216,20 +219,22 @@ class AsSlider {
 			this.sliderWrapper.append(this.arrowLeft);
 			this.sliderWrapper.append(this.arrowRight);
 
-			this.arrowLeft.addEventListener('click', (e)=>{
-				e.preventDefault();
-				this.movePrev();
+			[this.arrowLeft, this.arrowRight].forEach(arrow => {
+				arrow.addEventListener('click', (e)=>{
+					e.preventDefault();
 
-				// stops autoplay when a slide has changed by user interaction (if stopAtAction option is true)
-				if (this.autoplayInterval && this.sliderOptions.stopAtAction) this.stopAutoplay();
-			});
-
-			this.arrowRight.addEventListener('click', (e)=>{
-				e.preventDefault();
-				this.moveNext();
-
-				// stops autoplay when a slide has changed by user interaction (if stopAtAction option is true)
-				if (this.autoplayInterval && this.sliderOptions.stopAtAction) this.stopAutoplay();
+					if (arrow.classList.contains('arrow-left')) {
+						this.movePrev();
+					} else {
+						this.moveNext();
+					}
+	
+					// stops autoplay when a slide has changed by user interaction (if stopAtAction option is true)
+					if (this.sliderOptions.stopAtAction) {
+						this.stopAutoplay();
+						this.sliderOptions.stoppedByAction = true;
+					}
+				});
 			});
 		}
 			
@@ -246,11 +251,18 @@ class AsSlider {
 			this.updateCaption();
 		}
 
+		if (!this.isTouchDevice && this.sliderOptions.autoplay && this.sliderOptions.pauseOnHover) {
+			this.sliderWrapper.addEventListener('mouseenter', ()=>{
+				if (this.autoplayInterval) this.stopAutoplay();
+			});
+			this.sliderWrapper.addEventListener('mouseleave', ()=>{
+				if (!this.autoplayInterval && this.sliderOptions.stoppedByAction == false) this.startAutoplay();
+			});
+		}
+
 		// init autoplay if necesary
 		if (this.sliderOptions.autoplay) {
 			this.startAutoplay();
 		}
-	
-		// console.log(`%cInitiated! %cisInited: %c${this.isInited}`, 'font-weight: bold;', 'font-weight: normal;', 'font-weight: bold;');
 	};
 }

@@ -1,7 +1,15 @@
 "use strict";
 class AsSlider {
+    isInited;
+    currentSlideId;
+    sliderWrapper;
+    sliderContainer;
+    arrowLeft;
+    arrowRight;
+    autoplayInterval;
+    isTouchDevice;
+    sliderOptions;
     constructor(slider, options) {
-        var _a, _b, _c, _d, _e, _f, _g;
         this.isInited = false;
         this.currentSlideId = 0;
         this.sliderWrapper = document.querySelector(slider);
@@ -9,17 +17,19 @@ class AsSlider {
         this.arrowLeft = document.createElement('div');
         this.arrowRight = document.createElement('div');
         this.autoplayInterval = undefined;
+        this.isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
         this.sliderOptions = {
-            autoplay: (_a = options === null || options === void 0 ? void 0 : options.autoplay) !== null && _a !== void 0 ? _a : false,
-            autoplayDelay: (options === null || options === void 0 ? void 0 : options.autoplayDelay) || 5000,
-            stopAtAction: ((options === null || options === void 0 ? void 0 : options.stopAtAction) == true) ? true : false,
-            pauseOnHover: ((options === null || options === void 0 ? void 0 : options.pauseOnHover) == true) ? true : false,
-            transition: (_b = options === null || options === void 0 ? void 0 : options.transition) !== null && _b !== void 0 ? _b : 'fade',
-            arrowsNav: (_c = options === null || options === void 0 ? void 0 : options.arrowsNav) !== null && _c !== void 0 ? _c : true,
-            bulletsNav: (_d = options === null || options === void 0 ? void 0 : options.bulletsNav) !== null && _d !== void 0 ? _d : false,
-            keyboardNav: (_e = options === null || options === void 0 ? void 0 : options.keyboardNav) !== null && _e !== void 0 ? _e : true,
-            captions: (_f = options === null || options === void 0 ? void 0 : options.captions) !== null && _f !== void 0 ? _f : false,
-            autoHeight: (_g = options === null || options === void 0 ? void 0 : options.autoHeight) !== null && _g !== void 0 ? _g : true,
+            autoplay: options?.autoplay ?? false,
+            autoplayDelay: options?.autoplayDelay || 5000,
+            stopAtAction: (options?.stopAtAction == true) ? true : false,
+            stoppedByAction: false,
+            pauseOnHover: (options?.pauseOnHover == false) ? false : true,
+            transition: options?.transition ?? 'fade',
+            arrowsNav: options?.arrowsNav ?? true,
+            bulletsNav: options?.bulletsNav ?? false,
+            keyboardNav: options?.keyboardNav ?? true,
+            captions: options?.captions ?? false,
+            autoHeight: options?.autoHeight ?? true,
         };
     }
     childrenLength() {
@@ -34,7 +44,6 @@ class AsSlider {
     }
     ;
     updateHeight() {
-        var _a;
         const currentSlide = this.sliderContainer.children[this.currentSlideId];
         let newHeight = currentSlide.clientHeight;
         newHeight = newHeight + parseInt(window.getComputedStyle(currentSlide).borderTopWidth);
@@ -43,27 +52,25 @@ class AsSlider {
         newHeight = newHeight + parseInt(window.getComputedStyle(currentSlide).marginBottom);
         this.sliderContainer.style.height = `${newHeight}px`;
         if (this.sliderOptions.arrowsNav) {
-            (_a = this.sliderWrapper) === null || _a === void 0 ? void 0 : _a.querySelectorAll('.arrow').forEach(arrow => {
+            this.sliderWrapper?.querySelectorAll('.arrow').forEach(arrow => {
                 arrow.style.height = `${newHeight}px`;
             });
         }
     }
     ;
     updateActiveBullet(slideId) {
-        var _a, _b;
-        if (!((_a = this.sliderWrapper) === null || _a === void 0 ? void 0 : _a.querySelector('.bullet')))
+        if (!this.sliderWrapper?.querySelector('.bullet'))
             return;
         this.sliderWrapper.querySelectorAll('.bullet').forEach(elm => {
             elm.classList.remove('active');
         });
-        (_b = this.sliderWrapper.querySelector(`.bullet[data-slide-id="${slideId}"]`)) === null || _b === void 0 ? void 0 : _b.classList.add('active');
+        this.sliderWrapper.querySelector(`.bullet[data-slide-id="${slideId}"]`)?.classList.add('active');
     }
     ;
     updateCaption() {
-        var _a;
         if (!this.sliderOptions.captions)
             return;
-        const wrapperCaptions = (_a = this.sliderWrapper) === null || _a === void 0 ? void 0 : _a.querySelector('.wrapper-captions');
+        const wrapperCaptions = this.sliderWrapper?.querySelector('.wrapper-captions');
         const currentSlide = this.sliderContainer.children[this.currentSlideId];
         const captionsParagraph = wrapperCaptions.querySelector('p');
         if (!currentSlide || !wrapperCaptions)
@@ -144,7 +151,6 @@ class AsSlider {
     }
     ;
     init() {
-        var _a, _b, _c;
         if (this.isInited)
             return;
         this.isInited = true;
@@ -152,8 +158,8 @@ class AsSlider {
             return console.error('sliderWrapper is null/undefined. Check your selector or DOM elements.');
         if (this.sliderWrapper.children.length < 1)
             return console.error('There are no slides inside sliderWrapper.');
-        if (((_a = this.sliderWrapper.firstElementChild) === null || _a === void 0 ? void 0 : _a.tagName) === 'IMG') {
-            (_b = this.sliderWrapper.firstElementChild) === null || _b === void 0 ? void 0 : _b.addEventListener('load', () => {
+        if (this.sliderWrapper.firstElementChild?.tagName === 'IMG') {
+            this.sliderWrapper.firstElementChild?.addEventListener('load', () => {
                 if (this.sliderOptions.autoHeight)
                     this.updateHeight();
             });
@@ -169,7 +175,7 @@ class AsSlider {
             this.sliderContainer.append(slide);
         }
         this.sliderWrapper.setAttribute('data-transition', this.sliderOptions.transition);
-        (_c = this.sliderContainer.firstElementChild) === null || _c === void 0 ? void 0 : _c.classList.add('active');
+        this.sliderContainer.firstElementChild?.classList.add('active');
         this.sliderWrapper.appendChild(this.sliderContainer);
         if (this.sliderOptions.arrowsNav) {
             this.arrowLeft = document.createElement('div');
@@ -182,17 +188,20 @@ class AsSlider {
             this.arrowRight.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" height="48" width="48"><path d="m18.75 36-2.15-2.15 9.9-9.9-9.9-9.9 2.15-2.15L30.8 23.95Z"/></svg>';
             this.sliderWrapper.append(this.arrowLeft);
             this.sliderWrapper.append(this.arrowRight);
-            this.arrowLeft.addEventListener('click', (e) => {
-                e.preventDefault();
-                this.movePrev();
-                if (this.autoplayInterval && this.sliderOptions.stopAtAction)
-                    this.stopAutoplay();
-            });
-            this.arrowRight.addEventListener('click', (e) => {
-                e.preventDefault();
-                this.moveNext();
-                if (this.autoplayInterval && this.sliderOptions.stopAtAction)
-                    this.stopAutoplay();
+            [this.arrowLeft, this.arrowRight].forEach(arrow => {
+                arrow.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    if (arrow.classList.contains('arrow-left')) {
+                        this.movePrev();
+                    }
+                    else {
+                        this.moveNext();
+                    }
+                    if (this.sliderOptions.stopAtAction) {
+                        this.stopAutoplay();
+                        this.sliderOptions.stoppedByAction = true;
+                    }
+                });
             });
         }
         if (this.sliderOptions.captions) {
@@ -202,6 +211,16 @@ class AsSlider {
             wrapperCaptions.innerHTML = '<p></p>';
             this.sliderWrapper.append(wrapperCaptions);
             this.updateCaption();
+        }
+        if (!this.isTouchDevice && this.sliderOptions.autoplay && this.sliderOptions.pauseOnHover) {
+            this.sliderWrapper.addEventListener('mouseenter', () => {
+                if (this.autoplayInterval)
+                    this.stopAutoplay();
+            });
+            this.sliderWrapper.addEventListener('mouseleave', () => {
+                if (!this.autoplayInterval && this.sliderOptions.stoppedByAction == false)
+                    this.startAutoplay();
+            });
         }
         if (this.sliderOptions.autoplay) {
             this.startAutoplay();

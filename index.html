@@ -19,11 +19,15 @@
 		<img src="https://picsum.photos/800/600?random=3" alt="A caption!">
 	</div>
 	
-	<script src="as-slider.js"></script>
+	<!-- <script src="as-slider.js"></script> -->
+	<script src="as-slider.min.js"></script>
 	<script>
 		const slider = new AsSlider(".as-slider", {
 			captions: true,
-			autoplay: true
+			autoplay: true,
+			autoplayDelay: 2000,
+			// stopAtAction: true,
+			// pauseOnHover: false,
 		});
 		slider.init();
 	</script>

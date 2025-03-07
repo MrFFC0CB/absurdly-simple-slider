@@ -1,6 +1,6 @@
 {
 	"compilerOptions": {
-		"target": "ES6",
+		"target": "es2023",
 		"module": "none",
 		"outFile": "as-slider.js",
 		"strict": true,
