@@ -4,28 +4,31 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Absurdly Simple Slider</title>
-	<link rel="stylesheet" href="as-slider.css">
+	<link rel="stylesheet" href="dist/as-slider.min.css">
 	<style>
 		.as-slider {
-			width: 800px;
+			width: min(100%, 800px);
 			height: 600px;
+			margin: 0 auto;
 		}
 	</style>
 </head>
 <body>
 	<div class="as-slider">
-		<img src="https://picsum.photos/800/600?random=1" alt="Hello!">
-		<img src="https://picsum.photos/800/600?random=2" alt="This is!">
-		<img src="https://picsum.photos/800/600?random=3" alt="A caption!">
+		<!-- <img src="https://picsum.photos/800/600?random=1" alt="Hello!"> -->
+		<img src="/images/521-800x600.jpg" alt="Hello!">
+		<img src="/images/1002-800x600.jpg" alt="This is...">
+		<img src="/images/253-800x600.jpg" alt="" data-caption="A caption!">
+		<img src="/images/81-800x600.jpg" alt="Image Description" data-caption="'data-caption' has priority, so you can use 'alt' for SEO or something else.">
+		<img src="/images/701-800x600.jpg" alt="">
 	</div>
 	
-	<!-- <script src="as-slider.js"></script> -->
-	<script src="as-slider.min.js"></script>
+	<script src="dist/as-slider.min.js"></script>
 	<script>
 		const slider = new AsSlider(".as-slider", {
 			captions: true,
 			autoplay: true,
-			autoplayDelay: 2000,
+			autoplayDelay: 4000,
 			// stopAtAction: true,
 			// pauseOnHover: false,
 		});

@@ -4,7 +4,7 @@
 	"description": "A really simple javascript slider.",
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1",
-		"build": "tsc && npx terser as-slider.js -o as-slider.min.js --compress --mangle"
+		"build": "tsc && npx terser as-slider.js -o dist/as-slider.min.js --compress --mangle && node scripts/minify-css.js"
 	},
 	"repository": {
 		"type": "git",

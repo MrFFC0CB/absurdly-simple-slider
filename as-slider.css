@@ -1,3 +1,7 @@
+.as-slider,
+.as-slider * {
+	box-sizing: border-box;
+}
 .as-slider[data-transition="fade"] {
 	position: relative;
 }
@@ -52,6 +56,14 @@
 	bottom: 0;
 	z-index: 1;
 	text-align: center;
+	background-color: rgba(0,0,0,0.4);
+}
+.as-slider .wrapper-captions p {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 16px;
+	color: #fff;
+	margin: 0;
+	line-height: 1.2;
 }
 .as-slider.hasBullets .wrapper-captions {
 	bottom: 45px;

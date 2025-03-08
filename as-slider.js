@@ -75,11 +75,15 @@ class AsSlider {
         const captionsParagraph = wrapperCaptions.querySelector('p');
         if (!currentSlide || !wrapperCaptions)
             return;
-        if (currentSlide.hasAttribute('alt') || currentSlide.hasAttribute('data-caption')) {
-            wrapperCaptions.style.display = 'block';
-            const captionTxt = currentSlide.alt || currentSlide.dataset.caption;
-            if (captionTxt && captionsParagraph)
+        const captionTxt = currentSlide.dataset.caption || currentSlide.alt;
+        if (captionTxt) {
+            if (captionsParagraph) {
                 captionsParagraph.innerHTML = captionTxt;
+                wrapperCaptions.style.display = 'block';
+            }
+            else {
+                wrapperCaptions.style.display = 'none';
+            }
         }
         else {
             wrapperCaptions.style.display = 'none';
