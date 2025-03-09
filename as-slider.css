@@ -65,7 +65,7 @@
 	margin: 0;
 	line-height: 1.2;
 }
-.as-slider.hasBullets .wrapper-captions {
+.as-slider.has-bullets .wrapper-captions {
 	bottom: 45px;
 }
 .as-slider .wrapper-bullets {
@@ -81,9 +81,10 @@
 	cursor: pointer;
 	border-radius: 100px;
 	background-color: #5c5c5c;
+	border: 1px solid #303030;
 	transition: background-color 0.3s ease;
 }
 .as-slider .wrapper-bullets .bullet:hover, 
 .as-slider .wrapper-bullets .bullet.active {
-	background-color: #808285;
+	background-color: #adadad;
 }

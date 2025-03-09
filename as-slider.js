@@ -134,6 +134,22 @@ class AsSlider {
             this.updateActiveBullet(this.currentSlideId);
     }
     ;
+    goToSlide(slideId) {
+        if (slideId < 0)
+            return console.error('slideId must be a positive number.');
+        if (slideId >= this.childrenLength())
+            return console.error('slideId must be less than the number of slides.');
+        this.sliderContainer.children[this.currentSlideId].classList.remove('active');
+        this.sliderContainer.children[slideId].classList.add('active');
+        this.currentSlideId = slideId;
+        if (this.sliderOptions.autoHeight)
+            this.updateHeight();
+        if (this.sliderOptions.captions)
+            this.updateCaption();
+        if (this.sliderOptions.bulletsNav)
+            this.updateActiveBullet(this.currentSlideId);
+    }
+    ;
     startAutoplay(delay = undefined) {
         if (this.autoplayInterval)
             clearInterval(this.autoplayInterval);
@@ -216,6 +232,51 @@ class AsSlider {
             this.sliderWrapper.append(wrapperCaptions);
             this.updateCaption();
         }
+        if (this.sliderOptions.bulletsNav) {
+            this.sliderWrapper.classList.add('has-bullets');
+            const wrapperBullets = document.createElement('div');
+            wrapperBullets.classList.add('wrapper-bullets');
+            for (let i = 0; i < originalChildrenLength; i++) {
+                const bullet = document.createElement('div');
+                bullet.classList.add('bullet');
+                if (i === 0)
+                    bullet.classList.add('active');
+                bullet.setAttribute('data-slide-id', i.toString());
+                wrapperBullets.append(bullet);
+            }
+            wrapperBullets.addEventListener('click', (e) => {
+                const target = e.target;
+                if (target && target instanceof HTMLElement) {
+                    if (target.classList.contains('bullet')) {
+                        const slideToGo = parseInt(target.getAttribute('data-slide-id') || '0');
+                        this.goToSlide(slideToGo);
+                        this.updateActiveBullet(slideToGo);
+                    }
+                }
+            });
+            this.sliderWrapper.append(wrapperBullets);
+        }
+        if (!this.isTouchDevice && this.sliderOptions.keyboardNav) {
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'ArrowLeft') {
+                    e.preventDefault();
+                    this.movePrev();
+                }
+                if (e.key === 'ArrowRight') {
+                    e.preventDefault();
+                    this.moveNext();
+                }
+                if (e.key === 'Space') {
+                    e.preventDefault();
+                    if (this.autoplayInterval) {
+                        this.stopAutoplay();
+                    }
+                    else {
+                        this.startAutoplay();
+                    }
+                }
+            });
+        }
         if (!this.isTouchDevice && this.sliderOptions.autoplay && this.sliderOptions.pauseOnHover) {
             this.sliderWrapper.addEventListener('mouseenter', () => {
                 if (this.autoplayInterval)
@@ -229,6 +290,7 @@ class AsSlider {
         if (this.sliderOptions.autoplay) {
             this.startAutoplay();
         }
+        this.isInited = true;
     }
     ;
 }

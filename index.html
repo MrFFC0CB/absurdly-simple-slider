@@ -8,14 +8,13 @@
 	<style>
 		.as-slider {
 			width: min(100%, 800px);
-			height: 600px;
 			margin: 0 auto;
 		}
 	</style>
 </head>
 <body>
-	<div class="as-slider">
-		<!-- <img src="https://picsum.photos/800/600?random=1" alt="Hello!"> -->
+	<h3>Custom slider</h3>
+	<div id="custom-slider">
 		<img src="/images/521-800x600.jpg" alt="Hello!">
 		<img src="/images/1002-800x600.jpg" alt="This is...">
 		<img src="/images/253-800x600.jpg" alt="" data-caption="A caption!">
@@ -23,16 +22,26 @@
 		<img src="/images/701-800x600.jpg" alt="">
 	</div>
 	
+	<h3>Default slider</h3>
+	<div id="default-slider">
+		<img src="https://picsum.photos/800/600?random=1" alt="">
+		<img src="https://picsum.photos/800/600?random=2" alt="">
+		<img src="https://picsum.photos/800/600?random=3" alt="">
+	</div>
+
 	<script src="dist/as-slider.min.js"></script>
 	<script>
-		const slider = new AsSlider(".as-slider", {
+		const defaultSlider = new AsSlider("#default-slider").init();
+
+		const customSlider = new AsSlider("#custom-slider", {
 			captions: true,
 			autoplay: true,
 			autoplayDelay: 4000,
 			// stopAtAction: true,
 			// pauseOnHover: false,
+			bulletsNav: true,
 		});
-		slider.init();
+		customSlider.init();
 	</script>
 </body>
 </html>
