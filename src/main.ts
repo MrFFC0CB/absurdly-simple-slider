@@ -37,7 +37,8 @@ class AsSlider {
 			autoplayDelay: options?.autoplayDelay || 5000,
 			stopAtAction: (options?.stopAtAction == true) ? true : false,
 			stoppedByAction: false,
-			pauseOnHover: (options?.pauseOnHover == false) ? false : true,
+			// pauseOnHover: (options?.pauseOnHover == false) ? false : true,
+			pauseOnHover: options?.pauseOnHover != false,
 			transition: options?.transition ?? 'fade',
 			arrowsNav: options?.arrowsNav ?? true,
 			bulletsNav: options?.bulletsNav ?? false,
@@ -58,7 +59,10 @@ class AsSlider {
 	};
 
 	updateHeight(): void {
-		const currentSlide: Element = this.sliderContainer.children[this.currentSlideId];
+		const currentSlide: Element = this.sliderContainer?.children[this.currentSlideId];
+
+		if (!currentSlide) return;
+
 		let newHeight = currentSlide.clientHeight;
 
 		newHeight = newHeight + parseInt(window.getComputedStyle(currentSlide).borderTopWidth);
@@ -108,6 +112,16 @@ class AsSlider {
 			
 			if (captionsParagraph) captionsParagraph.innerHTML = '';
 		}
+	};
+
+	/**
+	 * Stops autoplay if it is enabled and stopAtAction is true in the options.
+	 * 
+	 * Also sets the stoppedByAction property to true.
+	 */
+	stopAtActionMethod(): void {
+		this.stopAutoplay();
+		this.sliderOptions.stoppedByAction = true;
 	};
 
 	movePrev(): void {
@@ -187,21 +201,30 @@ class AsSlider {
 		this.autoplayInterval = undefined;
 	};
 
-	init(): void {
+	/**
+	 * Hides or shows the navigation arrows depending on the number of children slides.
+	 *
+	 * If the number of children slides is more than 1, the arrows are shown,
+	 * otherwise they are hidden.
+	 */
+	hideShowArrowsNavigation(): void {
+		if (this.sliderOptions.arrowsNav != true) return;
+
+		if (this.childrenLength() > 1) {
+			this.arrowLeft.style.display = '';
+			this.arrowRight.style.display = '';
+		} else {
+			this.arrowLeft.style.display = 'none';
+			this.arrowRight.style.display = 'none';
+		}
+	};
+
+	init(): AsSlider | undefined {
 		if (this.isInited) return;
 
-		this.isInited = true;
-
 		// check for dom elements to be there
-		if (!this.sliderWrapper) return console.error('sliderWrapper is null/undefined. Check your selector or DOM elements.');
-		if (this.sliderWrapper.children.length < 1) return console.error('There are no slides inside sliderWrapper.');
-
-		// if the first slide is an image, wait untill it loads and update slider height (if autoHeight is enabled)
-		if (this.sliderWrapper.firstElementChild?.tagName === 'IMG') {
-			this.sliderWrapper.firstElementChild?.addEventListener('load', ()=>{
-				if (this.sliderOptions.autoHeight) this.updateHeight();
-			});
-		}
+		if (!this.sliderWrapper || !this.sliderContainer) throw new Error('sliderWrapper or sliderContainer are null/undefined. Check your selector or DOM elements.');
+		if (this.sliderWrapper.children.length < 1) throw new Error('There are no slides inside sliderWrapper.');
 
 		// build the slider
 		this.sliderWrapper.classList.add('as-slider');
@@ -248,13 +271,11 @@ class AsSlider {
 						this.moveNext();
 					}
 	
-					// stops autoplay when a slide has changed by user interaction (if stopAtAction option is true)
-					if (this.sliderOptions.stopAtAction) {
-						this.stopAutoplay();
-						this.sliderOptions.stoppedByAction = true;
-					}
+					if (this.sliderOptions.stopAtAction) this.stopAtActionMethod();
 				});
 			});
+
+			this.hideShowArrowsNavigation();
 		}
 			
 		// append captions if necesary
@@ -294,6 +315,8 @@ class AsSlider {
 						
 						this.goToSlide(slideToGo);
 						this.updateActiveBullet(slideToGo);
+
+						if (this.sliderOptions.stopAtAction) this.stopAtActionMethod();
 					}
 				}
 			});
@@ -301,19 +324,31 @@ class AsSlider {
 			this.sliderWrapper.append(wrapperBullets);
 		}
 
+		// if the first slide is an image, wait untill DOM loads and update slider height (if autoHeight is enabled).
+		if (this.sliderContainer.firstElementChild?.tagName === 'IMG') {
+			const tmpImg = new Image();
+			
+			tmpImg.addEventListener('load', ()=>{
+				if (this.sliderOptions.autoHeight) this.updateHeight();
+			});
+
+			tmpImg.src = this.sliderContainer.firstElementChild.getAttribute('src') || '';
+		}
+
 		// append keyboard navigation if necesary
 		if (!this.isTouchDevice && this.sliderOptions.keyboardNav) {
-			document.addEventListener('keydown', (e)=>{
+			this.sliderWrapper.setAttribute('tabindex', '0');
+
+			this.sliderWrapper.addEventListener('keydown', (e)=>{
+				e.preventDefault();
+
 				if (e.key === 'ArrowLeft') {
-					e.preventDefault();
 					this.movePrev();
 				}
 				if (e.key === 'ArrowRight') {
-					e.preventDefault();
 					this.moveNext();
 				}
 				if (e.key === 'Space') {
-					e.preventDefault();
 					if (this.autoplayInterval) {
 						this.stopAutoplay();
 					} else {
@@ -334,11 +369,15 @@ class AsSlider {
 		}
 
 		// init autoplay if necesary
-		if (this.sliderOptions.autoplay) {
-			this.startAutoplay();
+		if (this.sliderOptions.autoplay) this.startAutoplay();
+
+		if (this.sliderOptions.autoHeight) {
+			this.updateHeight();
+			window.addEventListener('resize', this.updateHeight.bind(this));
 		}
 
-		// this.updateHeight();
 		this.isInited = true;
+
+		return this;
 	};
 }

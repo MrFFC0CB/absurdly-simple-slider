@@ -41,7 +41,7 @@
 	pointer-events: none;
 }
 .as-slider .arrow svg * {
-	fill: #fff;
+	fill: #d8d8d8;
 }
 .as-slider .arrow.arrow-left {
 	left: 0;
@@ -56,12 +56,12 @@
 	bottom: 0;
 	z-index: 1;
 	text-align: center;
-	background-color: rgba(0,0,0,0.4);
+	background-color: rgba(0,0,0,0.6);
 }
 .as-slider .wrapper-captions p {
 	font-family: Arial, Helvetica, sans-serif;
-	font-size: 16px;
-	color: #fff;
+	font-size: 1.2rem;
+	color: #ebebeb;
 	margin: 0;
 	line-height: 1.2;
 }
