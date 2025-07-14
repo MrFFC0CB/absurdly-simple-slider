@@ -4,44 +4,196 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Absurdly Simple Slider</title>
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
 	<link rel="stylesheet" href="dist/as-slider.min.css">
 	<style>
-		.as-slider {
-			width: min(100%, 800px);
+		/* RESET */
+		* {margin: 0; padding: 0; border: 0; font-size: 100%; font: inherit; box-sizing: border-box;} *, ::before, ::after {box-sizing: border-box;} article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section {display: block;} body {line-height: 1;} a {text-decoration:none;} ol, ul {list-style: none;} *:active, *:focus {border: none; outline: none;} strong {font-weight: bold;} em {font-style: italic;}
+		/* RESET */
+
+		body {
+			font-family: Arial, Helvetica, sans-serif;
+			padding: 1rem 0.5rem 1.6rem;
+			margin: 0;
+			background-color: #ebebeb;
+		}
+		h1, 
+		h2, 
+		h3 {
+			font-weight: bold;
+			text-align: center;
+			margin-bottom: 1rem;
+		}
+		h1 {
+			font-size: 2rem;
+			text-decoration: underline;
+		}
+		h2 {
+			font-size: 1.6rem;
+		}
+		h3 {
+			font-size: 1.2rem;
+		}
+		p {
+			line-height: 1.2;
+		}
+		hr {
+			height: 2px;
+			margin: 1.8rem 0 2rem;
+			background-color: #aac1c2;
+		}
+		section + section {
+			margin-top: 2.4rem;
+		}
+		.container {
+			width: min(100%, 51.25rem);
 			margin: 0 auto;
+		}
+		div.as-slide pre {
+			width: max-content;
+			max-width: 80%;
+			margin: 0 auto;
+			overflow: auto;
+
+			background: #1e1e1e;
+			color: #d4d4d4;
+			padding: 1rem;
+			overflow-x: auto;
+			border-radius: 6px;
+			font-family: 'Fira Code', monospace;
+			font-size: 0.9rem;
+			line-height: 1.5;
+		}
+		div.as-slide pre code {
+			display: block;
+			white-space: pre;
+		}
+		#slider-with-options div.as-slide {
+			width: 100%;
+			height: 100%;
+			align-content: center;
+			color: #c5cae9;
+			background-color: #282c34;
+		}
+		#slider-with-captions div.as-slide {
+			width: 100%;
+			height: 100%;
+			background-color: #1c9fa3;
+			text-align: center;
+			align-content: center;
 		}
 	</style>
 </head>
 <body>
-	<h3>Custom slider</h3>
-	<div id="custom-slider">
-		<img src="/images/521-800x600.jpg" alt="Hello!">
-		<img src="/images/1002-800x600.jpg" alt="This is...">
-		<img src="/images/253-800x600.jpg" alt="" data-caption="A caption!">
-		<img src="/images/81-800x600.jpg" alt="Image Description" data-caption="'data-caption' has priority, so you can use 'alt' for SEO or something else.">
-		<img src="/images/701-800x600.jpg" alt="">
-	</div>
-	
-	<h3>Default slider</h3>
-	<div id="default-slider">
-		<img src="https://picsum.photos/800/600?random=1" alt="">
-		<img src="https://picsum.photos/800/600?random=2" alt="">
-		<img src="https://picsum.photos/800/600?random=3" alt="">
+	<div class="container">
+		<section id="intro">
+			<h1>Absurdly Simple Slider</h1>
+			<p>
+				A really simple javascript slider.
+				<br><br>
+				Images used in this project come from <a href="https://picsum.photos/" target="_blank">Lorem Picsum</a>, which pulls from <a href="https://unsplash.com/" target="_blank">Unsplash</a>. Thanks to the developers and photographers!
+				<br><br>
+				And thanks to <a href="https://dimsemenov.com/plugins/royal-slider/" target="_blank" rel="noopener noreferrer">RoyalSlider</a> by <a href="https://dimsemenov.com/" target="_blank" rel="noopener noreferrer">Dmitry Semenov</a> for being a hugh inspiration for this project and an awesome slider too.
+			</p>
+		</section>
+		<section id="examples"></section>
+		<h2>Examples</h2>
+		<p>
+			The examples below show basic usage and configuration of the slider. For the complete source code and documentation, check out the <a href="https://github.com/MrFFC0CB/absurdly-simple-slider" target="_blank">repository</a>.
+		</p>
+
+		<hr>
+		<h3>Default slider</h3>
+		<div id="default-slider">
+			<!-- <img src="https://picsum.photos/800/600?random=1" alt=""> -->
+			<img src="images/460-800x600.jpg" alt="">
+			<img src="images/252-800x600.jpg" alt="">
+			<img src="images/16-800x600.jpg" alt="">
+			<img src="images/844-800x600.jpg" alt="">
+		</div>
+
+		<hr>
+		<h3>Slider with autoplay and custom options</h3>
+		<div id="slider-with-options">
+			<img src="images/521-800x600.jpg" alt="This slider has captions">
+			<img src="images/1002-800x600.jpg" alt="This slider has bullets">
+			<img src="images/253-800x600.jpg" alt="This slider has autoplay">
+			<div class="as-slide" data-caption="Javascript code">
+				<pre><code class="language-javascript">
+const sliderInstance = new AsSlider("#your-slider-id", {
+	// options
+	captions: true,
+	autoplay: true,
+	autoplayDelay: 4000,
+	stopAtAction: true, // stops autoplay on user interaction
+	bulletsNav: true
+})
+.init();
+				</code></pre>
+			</div>
+			<div class="as-slide" data-caption="HTML code">
+				<pre><code class="language-html">
+&lt;div id=&quot;your-slider-id&quot;&gt;
+	&lt;img src=&quot;images/800x600.jpg&quot; alt=&quot;&quot;&gt;
+	&lt;div&gt;
+		&lt;p&gt;Hello!&lt;/p&gt;
+	&lt;/div&gt;
+
+	&lt;!-- rest of your slides --&gt;
+&lt;/div&gt;
+				</code></pre>
+			</div>
+		</div>
+
+		<hr>
+		<h3>Slider with captions</h3>
+		<div id="slider-with-captions">
+			<img src="images/data-caption-example.jpg" alt="Image Description" data-caption="Text from 'data-caption' attribute">
+			<img src="images/701-800x600.jpg" alt="Text from 'alt' attribute">
+			<div class="as-slide" data-caption="This is a div element with 'data-caption' attribute">
+				<p style="font-size: 3rem; color: #cce7f1;">Hello!</p>
+			</div>
+			<div class="as-slide" data-caption="HTML code">
+				<pre><code class="language-html">
+&lt;div id="slider-with-captions"&gt;
+	&lt;img src="images/data-caption-example.jpg" alt="Image Description" data-caption="Text from 'data-caption' attribute"&gt;
+	&lt;img src="images/701-800x600.jpg" alt="Text from 'alt' attribute"&gt;
+	&lt;div data-caption="This is a div element with 'data-caption' attribute"&gt;
+		&lt;p&gt;Hello!&lt;/p&gt;
+	&lt;/div&gt;
+&lt;/div&gt;
+				</code></pre>
+			</div>
+			<div class="as-slide" data-caption="Javascript code">
+				<pre><code class="language-javascript">
+const sliderWithCaptions = new AsSlider("#slider-with-captions", {
+	captions: true
+})
+.init();
+				</code></pre>
+			</div>
+		</div>
 	</div>
 
 	<script src="dist/as-slider.min.js"></script>
 	<script>
 		const defaultSlider = new AsSlider("#default-slider").init();
 
-		const customSlider = new AsSlider("#custom-slider", {
+		const sliderWithOptions = new AsSlider("#slider-with-options", {
 			captions: true,
 			autoplay: true,
 			autoplayDelay: 4000,
-			// stopAtAction: true,
-			// pauseOnHover: false,
-			bulletsNav: true,
-		});
-		customSlider.init();
+			stopAtAction: true,
+			bulletsNav: true
+		})
+		.init();
+
+		const sliderWithCaptions = new AsSlider("#slider-with-captions", {
+			captions: true
+		}).init();
 	</script>
+
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
 </body>
 </html>
