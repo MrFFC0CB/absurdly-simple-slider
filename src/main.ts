@@ -19,7 +19,7 @@ class AsSlider {
 	sliderContainer: HTMLElement;
 	arrowLeft: HTMLDivElement | HTMLElement;
 	arrowRight: HTMLDivElement | HTMLElement;
-	autoplayInterval: number | undefined;
+	autoplayInterval: number | null;
 	isTouchDevice: boolean;
 	sliderOptions: Options;
 
@@ -30,7 +30,7 @@ class AsSlider {
 		this.sliderContainer = document.createElement('div');
 		this.arrowLeft = document.createElement('div');
 		this.arrowRight = document.createElement('div');
-		this.autoplayInterval = undefined;
+		this.autoplayInterval = null;
 		this.isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
 		this.sliderOptions = {
 			autoplay: options?.autoplay ?? false,
@@ -197,8 +197,10 @@ class AsSlider {
 	};
 	
 	stopAutoplay(): void {
-		clearInterval(this.autoplayInterval);
-		this.autoplayInterval = undefined;
+		if (this.autoplayInterval) {
+			clearInterval(this.autoplayInterval);
+			this.autoplayInterval = null;
+		}
 	};
 
 	/**

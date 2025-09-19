@@ -29,14 +29,14 @@ You can find some examples here: [https://mrffc0cb.github.io/absurdly-simple-sli
 
 ## Installation
 
-Download the files at `dist` folder and place them wherever you want in your project.
+Download the files from the `dist` folder and place them wherever you want in your project.
 
 Include the CSS file inside your `<head>` element.
 ```html
 <link rel="stylesheet" href="absurdly-simple-slider/as-slider.min.css">
 ```
 
-Add the JS file at the end of your `<body>` element.
+Include the JS file before the closing `</body>` tag.
 ```html
 <script src="absurdly-simple-slider/as-slider.min.js"></script>
 ```
@@ -68,42 +68,57 @@ const slider = new AsSlider(".slider");
 // initialize slider
 slider.init();
 ```
+### Passing options.
+Directly:
+```js
+const slider = new AsSlider(".slider", {
+	autoplay: true,
+	autoplayDelay: 3000
+});
+```
+Using a predefined options object:
+```js
+const options = {
+	autoplay: true,
+	autoplayDelay: 3000
+};
+const slider = new AsSlider(".slider", options);
+```
 
 ---
 
 ## Options
 
-| Name           | Type          | Default     |
-|----------------|---------------|-------------|
-| autoplay       | `boolean`     | `false`     |
-| autoplayDelay  | `number` (ms) | `5000`      |
-| stopAtAction   | `boolean`     | `false`     |
-| stoppedByAction| `boolean`     | `false`     |
-| pauseOnHover   | `boolean`     | `true`      |
-| transition     | `string`      | `'fade'`    |
-| arrowsNav      | `boolean`     | `true`      |
-| bulletsNav     | `boolean`     | `false`     |
-| keyboardNav    | `boolean`     | `true`      |
-| captions       | `boolean`     | `false`     |
-| autoHeight     | `boolean`     | `true`      |
-
-**Note:** Currently, only the `'fade'` transition is available. I plan to add more transition types in the future.
+| Name           | Type          | Default     | Description |
+|-|-|-|-|
+| autoplay       | `boolean`     | `false`     | Automatically start cycling through slides. |
+| autoplayDelay  | `number` (ms) | `5000`      | Delay between slides when autoplay is active (in ms). |
+| stopAtAction   | `boolean`     | `false`     | Stop autoplay when the user interacts (arrows or bullets). |
+| stoppedByAction| `boolean`     | `false`     | Indicates if autoplay was stopped due to user interaction. |
+| pauseOnHover   | `boolean`     | `true`      | Pause autoplay when the mouse is over the slider. |
+| transition     | `string`      | `'fade'`    | Transition effect between slides (currently only `'fade'`). |
+| arrowsNav      | `boolean`     | `true`      | Show navigation arrows. |
+| bulletsNav     | `boolean`     | `false`     | Show navigation bullets. |
+| keyboardNav    | `boolean`     | `true`      | Allow navigation with keyboard arrow keys (slider must be focused). |
+| captions       | `boolean`     | `false`     | Show captions from the `alt` attribute or custom markup. |
+| autoHeight     | `boolean`     | `true`      | Adjust the slider’s height to match the current slide. |
 
 ---
 
 ## Methods
 
-| Name | Description | Returns |
-|-|-|-|
-| `slider.childrenLength()`           | Gets the total number of slides.                          | `number` (int) |
-| `slider.updateHeight()`             | Updates the slider height based on the current slide.     | `void` |
-| `slider.updateCaption()`            | Updates the slider global caption.                        | `void` |
-| `slider.stopAtActionMethod()`       | Stops autoplay when user clicks on nav arrows or bullets. | `void` |
-| `slider.movePrev()`                 | Moves to the previous slide.                              | `void` |
-| `slider.moveNext()`                 | Moves to the next slide.                                  | `void` |
-| `slider.stopAutoplay()`             | Stops the autoplay.                                       | `void` |
-| `slider.hideShowArrowsNavigation()` | Shows or hides arrows based on state.                     | `void` |
-| `slider.init()`                     | Initializes the slider.                                   | `slider instance` or `undefined` if it’s already initialized |
+| Name | Params | Description | Returns |
+|-|-|-|-|
+| `slider.childrenLength()`           |                 | Gets the total number of slides.                          | `number` (int) |
+| `slider.updateHeight()`             |                 | Updates the slider height based on the current slide.     | `void` |
+| `slider.updateCaption()`            |                 | Updates the slider global caption.                        | `void` |
+| `slider.stopAtActionMethod()`       |                 | Stops autoplay when user clicks on nav arrows or bullets. | `void` |
+| `slider.movePrev()`                 |                 | Moves to the previous slide.                              | `void` |
+| `slider.moveNext()`                 |                 | Moves to the next slide.                                  | `void` |
+| `slider.goToSlide(index)`           | `index: number` | Goes to a specific slide.                                | `void` |
+| `slider.stopAutoplay()`             |                 | Stops the autoplay.                                       | `void` |
+| `slider.hideShowArrowsNavigation()` |                 | Shows or hides arrows based on state.                     | `void` |
+| `slider.init()`                     |                 | Initializes the slider.                                   | `slider instance` or `undefined` if it’s already initialized |
 
 ---
 
@@ -117,7 +132,7 @@ slider.init();
 | sliderContainer  | Element containing the slides.                                 | `HTMLDivElement` \| `undefined` |
 | arrowLeft        | Left arrow element.                                            | `HTMLDivElement` \| `undefined` |
 | arrowRight       | Right arrow element.                                           | `HTMLDivElement` \| `undefined` |
-| autoplayInterval | Indicates if the slider autoplay is running or not.            | `number` \| `undefined` |
+| autoplayInterval | Holds the autoplay interval ID, or null if not running.        | `number`         \| `null`      |
 | isTouchDevice    | Indicates if the device has touch support.                     | `true` \| `false` |
 | sliderOptions    | Object containing all active slider options.                   | `object` |
 
