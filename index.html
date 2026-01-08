@@ -82,6 +82,9 @@
 			text-align: center;
 			align-content: center;
 		}
+		#slider-with-custom-autoplay .as-slide {
+			transition: all 0.3s ease;
+		}
 	</style>
 </head>
 <body>
@@ -173,6 +176,22 @@ const sliderWithCaptions = new AsSlider("#slider-with-captions", {
 			</div>
 		</div>
 
+		<hr>
+		<h3>Slider with custom autoplay</h3>
+		<p>You can use slider methods to make your own autoplay.</p>
+		<div id="slider-with-custom-autoplay">
+			<img src="images/701-800x600.jpg" alt="">
+			<img src="images/1002-800x600.jpg" alt="">
+			<img src="images/16-800x600.jpg" alt="">
+			<div class="as-slide" data-caption="HTML code">
+<pre><code class="language-html">
+</code></pre>
+			</div>
+			<div class="as-slide" data-caption="Javascript code">
+<pre><code class="language-javascript">
+</code></pre>
+			</div>
+		</div>
 	</div>
 
 	<script src="dist/as-slider.min.js"></script>
@@ -191,6 +210,22 @@ const sliderWithCaptions = new AsSlider("#slider-with-captions", {
 		const sliderWithCaptions = new AsSlider("#slider-with-captions", {
 			captions: true
 		}).init();
+
+		const sliderWithCustomAutoplay = new AsSlider("#slider-with-custom-autoplay", {
+			captions: true,
+			autoplay: false
+		})
+		.init();
+		const customAutoplay = () => {
+			sliderWithCustomAutoplay.sliderWrapper.querySelector('.as-slide.active').style.filter = 'grayscale(100%)';
+			setTimeout(() => {
+				sliderWithCustomAutoplay.moveNext();
+				sliderWithCustomAutoplay.sliderWrapper.querySelectorAll('.as-slide').forEach(slide => slide.style.filter = 'grayscale(0%)');
+			}, 3000);
+			
+			setInterval(customAutoplay, 5000);
+		};
+		customAutoplay();
 	</script>
 
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
