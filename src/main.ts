@@ -13,6 +13,8 @@ interface Options {
 }
 
 class AsSlider {
+	private observerCarousels: IntersectionObserver | null = null;
+
 	isInited: boolean;
 	currentSlideId: number;
 	sliderWrapper: HTMLElement | null;
@@ -37,7 +39,6 @@ class AsSlider {
 			autoplayDelay: options?.autoplayDelay || 5000,
 			stopAtAction: (options?.stopAtAction == true) ? true : false,
 			stoppedByAction: false,
-			// pauseOnHover: (options?.pauseOnHover == false) ? false : true,
 			pauseOnHover: options?.pauseOnHover != false,
 			transition: options?.transition ?? 'fade',
 			arrowsNav: options?.arrowsNav ?? true,
@@ -97,7 +98,6 @@ class AsSlider {
 		
 		if (!currentSlide || !wrapperCaptions) return;
 		
-		// const captionTxt: string | undefined = currentSlide.alt || currentSlide.dataset.caption;
 		const captionTxt: string | undefined = currentSlide.dataset.caption || currentSlide.alt;
 		
 		if (captionTxt) {
@@ -137,7 +137,6 @@ class AsSlider {
 			prevSlide.classList.add('active');
 			currentSlide.classList.remove('active');
 
-			
 			this.currentSlideId--;
 		}
 
@@ -182,7 +181,7 @@ class AsSlider {
 	};
 
 	startAutoplay(delay: number | undefined = undefined): void {
-		if (this.autoplayInterval) clearInterval(this.autoplayInterval);
+		this.stopAutoplay();
 
 		if (delay) {
 			if (typeof delay != 'number') return console.error('delay must be a number.');
@@ -342,15 +341,21 @@ class AsSlider {
 			this.sliderWrapper.setAttribute('tabindex', '0');
 
 			this.sliderWrapper.addEventListener('keydown', (e)=>{
-				e.preventDefault();
+				if (e.code === 'ArrowLeft') {
+					e.preventDefault();
 
-				if (e.key === 'ArrowLeft') {
 					this.movePrev();
 				}
-				if (e.key === 'ArrowRight') {
+				if (e.code === 'ArrowRight') {
+					e.preventDefault();
+
 					this.moveNext();
 				}
-				if (e.key === 'Space') {
+				if (e.code === 'Space') {
+					if (!this.sliderOptions.autoplay) return;
+
+					e.preventDefault();
+
 					if (this.autoplayInterval) {
 						this.stopAutoplay();
 					} else {
@@ -363,15 +368,51 @@ class AsSlider {
 		// events for pause on hover
 		if (!this.isTouchDevice && this.sliderOptions.autoplay && this.sliderOptions.pauseOnHover) {
 			this.sliderWrapper.addEventListener('mouseenter', ()=>{
-				if (this.autoplayInterval) this.stopAutoplay();
+				this.stopAutoplay();
 			});
 			this.sliderWrapper.addEventListener('mouseleave', ()=>{
-				if (!this.autoplayInterval && this.sliderOptions.stoppedByAction == false) this.startAutoplay();
+				if (this.sliderOptions.stoppedByAction == false) this.startAutoplay();
+			});
+		}
+
+		// touch navigation
+		if (this.isTouchDevice) {
+			let startX: number = 0;
+			let startY: number = 0;
+
+			this.sliderWrapper.addEventListener('touchstart', (e)=>{
+				const touchObj = e.changedTouches[0];
+				startX = touchObj.clientX;
+				startY = touchObj.clientY;
+			});
+			this.sliderWrapper.addEventListener('touchend', (e)=>{
+				const touchObj = e.changedTouches[0];
+				const endX = touchObj.clientX;
+				const endY = touchObj.clientY;
+
+				if (endY - startY > 50 || endY - startY < -50) return;
+
+				if (endX - startX > 25) {
+					this.moveNext();
+				} else if (endX - startX < -25) {
+					this.movePrev();
+				}
 			});
 		}
 
 		// init autoplay if necesary
-		if (this.sliderOptions.autoplay) this.startAutoplay();
+		if (this.sliderOptions.autoplay) {
+			this.observerCarousels = new IntersectionObserver(entries => {
+				entries.forEach(entry => {
+					if (entry.isIntersecting) {
+						this.startAutoplay();
+					} else {
+						this.stopAutoplay();
+					}
+				});
+			});
+			this.observerCarousels.observe(this.sliderWrapper);
+		}
 
 		if (this.sliderOptions.autoHeight) {
 			this.updateHeight();

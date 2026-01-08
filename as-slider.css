@@ -13,7 +13,6 @@
 }
 .as-slider[data-transition="fade"] .as-slider-container > * {
 	width: 100%;
-	height: auto;
 	position: absolute;
 	top: 0;
 	left: 50%;
@@ -21,6 +20,9 @@
 	z-index: 0;
 	transform: translateX(-50%);
 	transition: opacity 0.3s ease;
+}
+.as-slider[data-transition="fade"] .as-slider-container > img {
+	height: auto;
 }
 .as-slider[data-transition="fade"] .as-slider-container > *.active {
 	opacity: 1;

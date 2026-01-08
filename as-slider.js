@@ -1,5 +1,6 @@
 "use strict";
 class AsSlider {
+    observerCarousels = null;
     isInited;
     currentSlideId;
     sliderWrapper;
@@ -158,8 +159,7 @@ class AsSlider {
     }
     ;
     startAutoplay(delay = undefined) {
-        if (this.autoplayInterval)
-            clearInterval(this.autoplayInterval);
+        this.stopAutoplay();
         if (delay) {
             if (typeof delay != 'number')
                 return console.error('delay must be a number.');
@@ -283,14 +283,18 @@ class AsSlider {
         if (!this.isTouchDevice && this.sliderOptions.keyboardNav) {
             this.sliderWrapper.setAttribute('tabindex', '0');
             this.sliderWrapper.addEventListener('keydown', (e) => {
-                e.preventDefault();
-                if (e.key === 'ArrowLeft') {
+                if (e.code === 'ArrowLeft') {
+                    e.preventDefault();
                     this.movePrev();
                 }
-                if (e.key === 'ArrowRight') {
+                if (e.code === 'ArrowRight') {
+                    e.preventDefault();
                     this.moveNext();
                 }
-                if (e.key === 'Space') {
+                if (e.code === 'Space') {
+                    if (!this.sliderOptions.autoplay)
+                        return;
+                    e.preventDefault();
                     if (this.autoplayInterval) {
                         this.stopAutoplay();
                     }
@@ -302,16 +306,48 @@ class AsSlider {
         }
         if (!this.isTouchDevice && this.sliderOptions.autoplay && this.sliderOptions.pauseOnHover) {
             this.sliderWrapper.addEventListener('mouseenter', () => {
-                if (this.autoplayInterval)
-                    this.stopAutoplay();
+                this.stopAutoplay();
             });
             this.sliderWrapper.addEventListener('mouseleave', () => {
-                if (!this.autoplayInterval && this.sliderOptions.stoppedByAction == false)
+                if (this.sliderOptions.stoppedByAction == false)
                     this.startAutoplay();
             });
         }
-        if (this.sliderOptions.autoplay)
-            this.startAutoplay();
+        if (this.isTouchDevice) {
+            let startX = 0;
+            let startY = 0;
+            this.sliderWrapper.addEventListener('touchstart', (e) => {
+                const touchObj = e.changedTouches[0];
+                startX = touchObj.clientX;
+                startY = touchObj.clientY;
+            });
+            this.sliderWrapper.addEventListener('touchend', (e) => {
+                const touchObj = e.changedTouches[0];
+                const endX = touchObj.clientX;
+                const endY = touchObj.clientY;
+                if (endY - startY > 50 || endY - startY < -50)
+                    return;
+                if (endX - startX > 25) {
+                    this.moveNext();
+                }
+                else if (endX - startX < -25) {
+                    this.movePrev();
+                }
+            });
+        }
+        if (this.sliderOptions.autoplay) {
+            this.observerCarousels = new IntersectionObserver(entries => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        this.startAutoplay();
+                    }
+                    else {
+                        this.stopAutoplay();
+                    }
+                });
+            });
+            this.observerCarousels.observe(this.sliderWrapper);
+        }
         if (this.sliderOptions.autoHeight) {
             this.updateHeight();
             window.addEventListener('resize', this.updateHeight.bind(this));
