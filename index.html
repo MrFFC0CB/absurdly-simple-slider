@@ -92,35 +92,35 @@
 		<section id="intro">
 			<h1>Absurdly Simple Slider</h1>
 			<p>
-				A really simple javascript slider.
+				A really simple Javascript slider.
 				<br><br>
 				Images used in this project come from <a href="https://picsum.photos/" target="_blank">Lorem Picsum</a>, which pulls from <a href="https://unsplash.com/" target="_blank">Unsplash</a>. Thanks to the developers and photographers!
 				<br><br>
 				And thanks to <a href="https://dimsemenov.com/plugins/royal-slider/" target="_blank" rel="noopener noreferrer">RoyalSlider</a> by <a href="https://dimsemenov.com/" target="_blank" rel="noopener noreferrer">Dmitry Semenov</a> for being a hugh inspiration for this project and an awesome slider too.
 			</p>
 		</section>
-		<section id="examples"></section>
-		<h2>Examples</h2>
-		<p>
-			The examples below show basic usage and configuration of the slider. For the complete source code and documentation, check out the <a href="https://github.com/MrFFC0CB/absurdly-simple-slider" target="_blank">repository</a>.
-		</p>
+		<section id="examples">
+			<h2>Examples</h2>
+			<p>
+				The examples below show basic usage and configuration of the slider. For the complete source code and documentation, check out the <a href="https://github.com/MrFFC0CB/absurdly-simple-slider" target="_blank">repository</a>.
+			</p>
 
-		<hr>
-		<h3>Default slider</h3>
-		<div id="default-slider">
-			<img src="images/460-800x600.jpg" alt="">
-			<img src="images/252-800x600.jpg" alt="">
-			<img src="images/16-800x600.jpg" alt="">
-			<img src="images/844-800x600.jpg" alt="">
-		</div>
+			<hr>
+			<h3>Default slider</h3>
+			<div id="default-slider">
+				<img src="images/460-800x600.jpg" alt="">
+				<img src="images/252-800x600.jpg" alt="">
+				<img src="images/16-800x600.jpg" alt="">
+				<img src="images/844-800x600.jpg" alt="">
+			</div>
 
-		<hr>
-		<h3>Slider with autoplay and custom options</h3>
-		<div id="slider-with-options">
-			<img src="images/521-800x600.jpg" alt="This slider has captions">
-			<img src="images/1002-800x600.jpg" alt="This slider has bullets">
-			<img src="images/253-800x600.jpg" alt="This slider has autoplay">
-			<div class="as-slide" data-caption="Javascript code">
+			<hr>
+			<h3>Slider with autoplay and custom options</h3>
+			<div id="slider-with-options">
+				<img src="images/521-800x600.jpg" alt="This slider has captions">
+				<img src="images/1002-800x600.jpg" alt="This slider has bullets">
+				<img src="images/253-800x600.jpg" alt="This slider has autoplay">
+				<div class="as-slide" data-caption="Javascript code">
 <pre><code class="language-javascript">
 const sliderInstance = new AsSlider("#your-slider-id", {
 	// options
@@ -132,8 +132,8 @@ const sliderInstance = new AsSlider("#your-slider-id", {
 })
 .init();
 </code></pre>
-			</div>
-			<div class="as-slide" data-caption="HTML code">
+				</div>
+				<div class="as-slide" data-caption="HTML code">
 <pre><code class="language-html">
 &lt;div id=&quot;your-slider-id&quot;&gt;
 	&lt;img src=&quot;images/800x600.jpg&quot; alt=&quot;&quot;&gt;
@@ -144,18 +144,18 @@ const sliderInstance = new AsSlider("#your-slider-id", {
 	&lt;!-- rest of your slides --&gt;
 &lt;/div&gt;
 </code></pre>
+				</div>
 			</div>
-		</div>
 
-		<hr>
-		<h3>Slider with captions</h3>
-		<div id="slider-with-captions">
-			<img src="images/data-caption-example.jpg" alt="Image Description" data-caption="Text from 'data-caption' attribute">
-			<img src="images/701-800x600.jpg" alt="Text from 'alt' attribute">
-			<div class="as-slide" data-caption="This is a div element with 'data-caption' attribute">
-				<p style="font-size: 3rem; color: #cce7f1;">Hello!</p>
-			</div>
-			<div class="as-slide" data-caption="HTML code">
+			<hr>
+			<h3>Slider with captions</h3>
+			<div id="slider-with-captions">
+				<img src="images/data-caption-example.jpg" alt="Image Description" data-caption="Text from 'data-caption' attribute">
+				<img src="images/701-800x600.jpg" alt="Text from 'alt' attribute">
+				<div class="as-slide" data-caption="This is a div element with 'data-caption' attribute">
+					<p style="font-size: 3rem; color: #cce7f1;">Hello!</p>
+				</div>
+				<div class="as-slide" data-caption="HTML code">
 <pre><code class="language-html">
 &lt;div id="slider-with-captions"&gt;
 	&lt;img src="images/data-caption-example.jpg" alt="Image Description" data-caption="Text from 'data-caption' attribute"&gt;
@@ -165,33 +165,34 @@ const sliderInstance = new AsSlider("#your-slider-id", {
 	&lt;/div&gt;
 &lt;/div&gt;
 </code></pre>
-			</div>
-			<div class="as-slide" data-caption="Javascript code">
+				</div>
+				<div class="as-slide" data-caption="Javascript code">
 <pre><code class="language-javascript">
 const sliderWithCaptions = new AsSlider("#slider-with-captions", {
 	captions: true
 })
 .init();
 </code></pre>
+				</div>
 			</div>
-		</div>
 
-		<hr>
-		<h3>Slider with custom autoplay</h3>
-		<p>You can use slider methods to make your own autoplay.</p>
-		<div id="slider-with-custom-autoplay">
-			<img src="images/701-800x600.jpg" alt="">
-			<img src="images/1002-800x600.jpg" alt="">
-			<img src="images/16-800x600.jpg" alt="">
-			<div class="as-slide" data-caption="HTML code">
+			<hr>
+			<h3>Slider with custom autoplay</h3>
+			<p>You can use slider methods to make your own autoplay.</p>
+			<div id="slider-with-custom-autoplay">
+				<img src="images/701-800x600.jpg" alt="">
+				<img src="images/1002-800x600.jpg" alt="">
+				<img src="images/16-800x600.jpg" alt="">
+				<div class="as-slide" data-caption="HTML code">
 <pre><code class="language-html">
 </code></pre>
-			</div>
-			<div class="as-slide" data-caption="Javascript code">
+				</div>
+				<div class="as-slide" data-caption="Javascript code">
 <pre><code class="language-javascript">
 </code></pre>
+				</div>
 			</div>
-		</div>
+		</section>
 	</div>
 
 	<script src="dist/as-slider.min.js"></script>
