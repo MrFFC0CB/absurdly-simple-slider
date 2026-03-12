@@ -1,6 +1,7 @@
 interface Options {
 	autoplay: boolean;
 	autoplayDelay: number;
+	autoplayCustomFunction: Function | null;
 	stopAtAction: boolean;
 	stoppedByAction: boolean;
 	pauseOnHover: boolean;
@@ -37,6 +38,7 @@ class AsSlider {
 		this.sliderOptions = {
 			autoplay: options?.autoplay ?? false,
 			autoplayDelay: options?.autoplayDelay || 5000,
+			autoplayCustomFunction: options?.autoplayCustomFunction || null,
 			stopAtAction: (options?.stopAtAction == true) ? true : false,
 			stoppedByAction: false,
 			pauseOnHover: options?.pauseOnHover != false,
@@ -57,6 +59,10 @@ class AsSlider {
 		} else {
 			return this.sliderWrapper.childElementCount;
 		}
+	};
+
+	getActiveSlideElm(): HTMLElement {
+		return this.sliderContainer.children[this.currentSlideId] as HTMLElement;
 	};
 
 	updateHeight(): void {
@@ -191,7 +197,11 @@ class AsSlider {
 		const delayTime = (delay) ? Math.trunc(delay) : this.sliderOptions.autoplayDelay;
 
 		this.autoplayInterval = setInterval(() => {
-			this.moveNext();
+			if (this.sliderOptions.autoplayCustomFunction) {
+				this.sliderOptions.autoplayCustomFunction();
+			} else {
+				this.moveNext();
+			}
 		}, delayTime);
 	};
 	

@@ -22,6 +22,7 @@ class AsSlider {
         this.sliderOptions = {
             autoplay: options?.autoplay ?? false,
             autoplayDelay: options?.autoplayDelay || 5000,
+            autoplayCustomFunction: options?.autoplayCustomFunction || null,
             stopAtAction: (options?.stopAtAction == true) ? true : false,
             stoppedByAction: false,
             pauseOnHover: options?.pauseOnHover != false,
@@ -42,6 +43,10 @@ class AsSlider {
         else {
             return this.sliderWrapper.childElementCount;
         }
+    }
+    ;
+    getActiveSlideElm() {
+        return this.sliderContainer.children[this.currentSlideId];
     }
     ;
     updateHeight() {
@@ -168,7 +173,12 @@ class AsSlider {
         }
         const delayTime = (delay) ? Math.trunc(delay) : this.sliderOptions.autoplayDelay;
         this.autoplayInterval = setInterval(() => {
-            this.moveNext();
+            if (this.sliderOptions.autoplayCustomFunction) {
+                this.sliderOptions.autoplayCustomFunction();
+            }
+            else {
+                this.moveNext();
+            }
         }, delayTime);
     }
     ;

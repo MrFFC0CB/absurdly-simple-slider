@@ -82,8 +82,14 @@
 			text-align: center;
 			align-content: center;
 		}
+		#slider-with-custom-autoplay {
+			margin-top: 0.5rem;
+		}
 		#slider-with-custom-autoplay .as-slide {
 			transition: all 0.3s ease;
+		}
+		#slider-with-custom-autoplay .as-slide[data-caption] {
+			filter: none !important;
 		}
 	</style>
 </head>
@@ -178,17 +184,39 @@ const sliderWithCaptions = new AsSlider("#slider-with-captions", {
 
 			<hr>
 			<h3>Slider with custom autoplay</h3>
-			<p>You can use slider methods to make your own autoplay.</p>
+			<p>You can use the '<em>autoplayCustomFunction</em>' option to pass your own autoplay function to the slider instance.</p>
 			<div id="slider-with-custom-autoplay">
 				<img src="images/701-800x600.jpg" alt="">
 				<img src="images/1002-800x600.jpg" alt="">
 				<img src="images/16-800x600.jpg" alt="">
 				<div class="as-slide" data-caption="HTML code">
 <pre><code class="language-html">
+&lt;div id="slider-with-custom-autoplay"&gt;
+	&lt;img src="images/701-800x600.jpg" alt=""&gt;
+	&lt;img src="images/1002-800x600.jpg" alt=""&gt;
+	&lt;img src="images/16-800x600.jpg" alt=""&gt;
+&lt;/div&gt;
 </code></pre>
 				</div>
 				<div class="as-slide" data-caption="Javascript code">
 <pre><code class="language-javascript">
+// Your custom function
+const customAutoplay = () => {
+	sliderWithCustomAutoplay.getActiveSlideElm().style.filter = 'grayscale(100%)';
+	setTimeout(() => {
+		sliderWithCustomAutoplay.moveNext();
+		sliderWithCustomAutoplay.sliderWrapper.querySelectorAll('.as-slide').forEach(slide => slide.style.filter = 'grayscale(0%)');
+	}, 3000);
+};
+
+// Initialize slider and pass your custom function as an option
+const sliderWithCustomAutoplay = new AsSlider("#slider-with-custom-autoplay", {
+	captions: true,
+	autoplay: true,
+	autoplayDelay: 6000,
+	autoplayCustomFunction: customAutoplay
+})
+.init();
 </code></pre>
 				</div>
 			</div>
@@ -212,21 +240,20 @@ const sliderWithCaptions = new AsSlider("#slider-with-captions", {
 			captions: true
 		}).init();
 
-		const sliderWithCustomAutoplay = new AsSlider("#slider-with-custom-autoplay", {
-			captions: true,
-			autoplay: false
-		})
-		.init();
 		const customAutoplay = () => {
-			sliderWithCustomAutoplay.sliderWrapper.querySelector('.as-slide.active').style.filter = 'grayscale(100%)';
+			sliderWithCustomAutoplay.getActiveSlideElm().style.filter = 'grayscale(100%)';
 			setTimeout(() => {
 				sliderWithCustomAutoplay.moveNext();
 				sliderWithCustomAutoplay.sliderWrapper.querySelectorAll('.as-slide').forEach(slide => slide.style.filter = 'grayscale(0%)');
 			}, 3000);
-			
-			setInterval(customAutoplay, 5000);
 		};
-		customAutoplay();
+		const sliderWithCustomAutoplay = new AsSlider("#slider-with-custom-autoplay", {
+			captions: true,
+			autoplay: true,
+			autoplayDelay: 6000,
+			autoplayCustomFunction: customAutoplay
+		})
+		.init();
 	</script>
 
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
