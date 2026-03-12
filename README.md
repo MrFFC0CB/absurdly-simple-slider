@@ -1,12 +1,21 @@
 # Absurdly Simple Slider
 
-A really simple Javascript slider.
+A really simple JavaScript slider.
 
 ---
 
 ## Why?
 
 It started as a super basic image slider I built for a work project that needed something lightweight and simple. Over time, similar needs kept popping up in other projects—sometimes with extra requirements. So I kept tweaking the original code, adding features as needed, and eventually, it evolved into its own thing: a general-purpose, absurdly simple slider.
+
+---
+
+## Use this when
+
+- You need a simple image slider
+- Don’t want dependencies
+- Don’t want configuration hell
+- You’re fine with fade-only transitions
 
 ---
 
@@ -46,6 +55,13 @@ Include the JS file before the closing `</body>` tag.
 ## Basic Usage
 
 ```html
+<style>
+	.slider {
+		width: 600px;
+		height: 600px;
+	}
+</style>
+
 <div class="slider">
 	<img src="images/slide-1.jpg" alt="">
 	<img src="images/slide-2.jpg" alt="">
@@ -91,8 +107,9 @@ const slider = new AsSlider(".slider", options);
 
 | Name           | Type          | Default     | Description |
 |-|-|-|-|
-| autoplay       | `boolean`     | `false`     | Automatically start cycling through slides. |
+| autoplay       | `boolean`     | `false`     | Automatically cycles through slides. |
 | autoplayDelay  | `number` (ms) | `5000`      | Delay between slides when autoplay is active (in ms). |
+| autoplayCustomFunction | `function` | `null` | A user-provided function that replaces the default autoplay behavior, giving full control over slide progression. |
 | stopAtAction   | `boolean`     | `false`     | Stop autoplay when the user interacts (arrows or bullets). |
 | stoppedByAction| `boolean`     | `false`     | Indicates if autoplay was stopped due to user interaction. |
 | pauseOnHover   | `boolean`     | `true`      | Pause autoplay when the mouse is over the slider. |
@@ -109,7 +126,8 @@ const slider = new AsSlider(".slider", options);
 
 | Name | Params | Description | Returns |
 |-|-|-|-|
-| `slider.childrenLength()`           |                 | Gets the total number of slides.                          | `number` (int) |
+| `slider.childrenLength()`           |                 | Returns the total number of slides.                       | `number` (int) |
+| `slider.getActiveSlideElm()`        |                 | Returns the HTML element of the currently active slide.   | `HTMLElement` |
 | `slider.updateHeight()`             |                 | Updates the slider height based on the current slide.     | `void` |
 | `slider.updateCaption()`            |                 | Updates the slider global caption.                        | `void` |
 | `slider.stopAtActionMethod()`       |                 | Stops autoplay when user clicks on nav arrows or bullets. | `void` |
@@ -127,7 +145,7 @@ const slider = new AsSlider(".slider", options);
 | Name | Description | Returns |
 |-|-|-|
 | isInited         | Indicates if the slider is already initialized.                | `true` \| `false` |
-| currentSlideId   | ID of the current slide.                                       | `number` |
+| currentSlideId   | Index of the current slide.                                    | `number` |
 | sliderWrapper    | Slider wrapper element.                                        | `HTMLDivElement` \| `undefined` |
 | sliderContainer  | Element containing the slides.                                 | `HTMLDivElement` \| `undefined` |
 | arrowLeft        | Left arrow element.                                            | `HTMLDivElement` \| `undefined` |
@@ -135,6 +153,15 @@ const slider = new AsSlider(".slider", options);
 | autoplayInterval | Holds the autoplay interval ID, or null if not running.        | `number`         \| `null`      |
 | isTouchDevice    | Indicates if the device has touch support.                     | `true` \| `false` |
 | sliderOptions    | Object containing all active slider options.                   | `object` |
+
+---
+
+## Behavior Notes
+
+- The slider rewrites the DOM structure on initialization.
+- Slides are reparented into an internal container.
+- Calling `init()` more than once has no effect.
+- Autoplay pauses when the slider leaves the viewport.
 
 ---
 
