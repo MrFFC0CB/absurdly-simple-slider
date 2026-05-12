@@ -173,6 +173,8 @@ class AsSlider {
 	};
 
 	goToSlide(slideId: number): void {
+		if (typeof slideId != 'number') slideId = parseInt(slideId);
+		if (isNaN(slideId)) return console.error('slideId must be a number.');
 		if (slideId < 0) return console.error('slideId must be a positive number.');
 		if (slideId >= this.childrenLength()) return console.error('slideId must be less than the number of slides.');
 
